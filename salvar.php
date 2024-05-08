@@ -15,10 +15,6 @@ if ($conn->connect_error) {
 
 // Verifica se o formulário foi enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Debugging: Print out form data
-    echo "Form data received: ";
-    print_r($_POST);
-
     // Prepara os dados para inserção no banco de dados
     $nome = $_POST["nome"];
     $dataNascimento = $_POST["dataNascimento"];
@@ -32,6 +28,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         echo "Erro ao inserir registro: " . $conn->error;
     }
+} else {
+    echo "Nenhum dado recebido do formulário.";
 }
 
 // Fecha a conexão com o banco de dados
