@@ -13,25 +13,27 @@ if ($conn->connect_error) {
     die("Erro na conexão: " . $conn->connect_error);
 }
 
-// Prepara a consulta SQL para obter os aniversariantes por mês
-$sql = "SELECT MONTH(data_nascimento) as mes, DAY(data_nascimento) as dia, nome FROM aniversariantes ORDER BY MONTH(data_nascimento), DAY(data_nascimento)";
+// Verifica se o formulário foi enviado
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Debugging: Print out form data
+    echo "Form data received: ";
+    print_r($_POST);
 
-$result = $conn->query($sql);
+    // Prepara os dados para inserção no banco de dados
+    $nome = $_POST["nome"];
+    $dataNascimento = $_POST["dataNascimento"];
 
-$aniversariantes = array();
+    // Prepara a consulta SQL para inserir os dados no banco de dados
+    $sql = "INSERT INTO aniversariantes (nome, data_nascimento) VALUES ('$nome', '$dataNascimento')";
 
-if ($result->num_rows > 0) {
-    // Output dos dados de cada linha
-    while($row = $result->fetch_assoc()) {
-        $mes = intval($row["mes"]);
-        $dia = intval($row["dia"]);
-        $nome = $row["nome"];
-        $aniversariantes[$mes][] = array("dia" => $dia, "nome" => $nome);
+    // Executa a consulta SQL
+    if ($conn->query($sql) === TRUE) {
+        echo "Registro inserido com sucesso.";
+    } else {
+        echo "Erro ao inserir registro: " . $conn->error;
     }
 }
 
+// Fecha a conexão com o banco de dados
 $conn->close();
-
-// Retornar os aniversariantes em formato JSON
-echo json_encode($aniversariantes);
 ?>
